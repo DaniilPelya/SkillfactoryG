@@ -1,0 +1,7 @@
+Python version = 3.9.7
+asgiref    3.4.1
+Django     4.0.1
+pip        21.3.1
+setuptools 57.4.0
+sqlparse   0.4.2
+tzdata     2021.5

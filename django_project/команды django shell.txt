@@ -1,0 +1,74 @@
+from news.models import * - импорт моделей из news
+an = User.objects.create_user(username='Anna') - создание пользователя Анна
+tim = User.objects.create_user(username='Timofei') - создание пользователя Тимофей
+Author.objects.create(author_user=an) - создание автора Анна
+Author.objects.create(author_user=tim) - создание автора Тимофей
+IT = Category.objects.create(name_category='IT') - создание категории IT
+sport = Category.objects.create(name_category='Sport') - создание категории Спорт
+technology = Category.objects.create(name_category='Technology') - создание категории Технологии
+science = Category.objects.create(name_category='The science') - создание категории Наука
+education = Category.objects.create(name_category='Education') - создание категории Образование
+politics = Category.objects.create(name_category='Politics') - создание категории Политика
+
+Post.objects.create(author=Author.objects.get(id=1), article_or_news='AR', title_post='Hiking trails of the Alps', text_post='The Alps attract tourists with their hiking trails and routes.') - добавление постов
+Post.objects.create(author=Author.objects.get(id=1), article_or_news='NE', title_post='Cancellation of the visa regime', text_post='Starting from 2024, no visas are required to enter Europe') - добавление постов
+Post.objects.create(author=Author.objects.get(id=2), article_or_news='AR', title_post='Viruses in the service of humans', text_post='Scientists have found a way to treat cancer with a modified virus') - добавление постов
+
+Post.objects.get(id=1).categories.add(sport, education) - добавление категорий к постам
+Post.objects.get(id=2).categories.add(politics) - добавление категорий к постам
+Post.objects.get(id=3).categories.add(science, education, technology) - добавление категорий к постам
+
+Comment.objects.create(post=Post.objects.get(id=1), user=User.objects.get(username='Timofei'), text_comment='Very interesting, please tell me more') - добавление коментариев к постам
+Comment.objects.create(post=Post.objects.get(id=1), user=User.objects.get(username='Anna'), text_comment='Thank you very much, in the following articles I will do an extensive review') - добавление коментариев к постам
+Comment.objects.create(post=Post.objects.get(id=2), user=User.objects.get(username='Timofei'), text_comment='I did not find confirmation in official sources. Where did you get such information?') - добавление коментариев к постам
+Comment.objects.create(post=Post.objects.get(id=3), user=User.objects.get(username='Anna'), text_comment='Such news inspires, we look forward to new posts') - добавление коментариев к постам
+
+Post.objects.get(id=1).like()
+Post.objects.get(id=1).like()
+Post.objects.get(id=2).dislike()
+Post.objects.get(id=3).like()
+Post.objects.get(id=3).like()
+Post.objects.get(id=3).like()
+Post.objects.get(id=3).like()
+
+Comment.objects.get(id=1).like()
+Comment.objects.get(id=1).like()
+Comment.objects.get(id=2).like()
+Comment.objects.get(id=4).like()
+Comment.objects.get(id=4).like()
+
+Author.objects.get(id=1).update_rating() - обновляем рейтинг пользователя Анна
+Author.objects.get(id=1).rating - показываем рейтинг пользователя Анна
+Author.objects.get(id=2).update_rating() - обновляем рейтинг пользователя Тимофей
+Author.objects.get(id=1).rating - показываем рейтинг пользователя Анна
+
+author_list = Author.objects.order_by('-rating')[:1] - находим лучшего автора
+author_list[0].rating - показываем рейтинг лучшего автора
+author_list[0].author_user.username - показываем имя автора с наибольшим рейтингом
+
+best_post = Post.objects.order_by('-rating_post')[:1] - находим лучшую статью
+for post in best_post:
+...     post.time_in_post - показываем время добавления лучшей статьи(КАК ВРЕМЯ ПОКАЗАТЬ В НОРМАЛЬНОМ ФОРМАТЕ?)
+...     post.author.author_user.username - показываем имя автора лучшей статьи
+...     post.rating_post - показываем рейтинг лучшей статьи
+...     post.title_post - показываем заголовок лучшей статьи
+...     post.preview() - показываем превью лучшей статьи
+
+comments = best_post[0].comment_set.all() - находим все коментарии к лучшей статье
+for comment in comments:
+...     comment.time_in_comment - показываем дату публикации лучшего коментария
+...     comment.user.username - показываем имя пользователя лучшего коментария
+...     comment.rating_comment - показываем рейтинг лучшего коментария
+...     comment.text_comment - показываем текст лучшего коментария
+
+
+
+
+
+
+
+
+
+
+
+
