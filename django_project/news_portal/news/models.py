@@ -25,6 +25,9 @@ class Author(models.Model):
 class Category(models.Model):
     name_category = models.CharField(max_length=64, unique=True)
 
+    def __str__(self):
+        return f'{self.name_category.title()}'
+
 
 class Post(models.Model):
     NEWS = 'NE'
@@ -53,6 +56,9 @@ class Post(models.Model):
     def preview(self):
         return f"{self.text_post[0:124]}..."
         #print - можно ли использовать вместо return?
+
+    def __str__(self):
+        return f'{self.title_post.title()}: {self.text_post[:20]}'
 
 
 class PostCategory(models.Model):
