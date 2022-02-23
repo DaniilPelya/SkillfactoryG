@@ -9,6 +9,9 @@ class Author(models.Model):
     author_user = models.OneToOneField(User, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
 
+    def __str__(self):
+        return f'{self.author_user.username}'
+
     def update_rating(self):
         postRat = self.post_set.aggregate(postRating=Sum('rating_post'))
         pRat = 0
@@ -40,7 +43,7 @@ class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     article_or_news = models.CharField(max_length=2, choices=NEWS_OR_ARTICLE, default=ARTICLE)
     time_in_post = models.DateTimeField(auto_now_add=True)
-    categories = models.ManyToManyField(Category, through='PostCategory')
+    category = models.ManyToManyField(Category, through='PostCategory')
     title_post = models.CharField(max_length=128)
     text_post = models.TextField()
     rating_post = models.IntegerField(default=0)
@@ -59,6 +62,9 @@ class Post(models.Model):
 
     def __str__(self):
         return f'{self.title_post.title()}: {self.text_post[:20]}'
+
+    def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
+        return f'/news/{self.id}'
 
 
 class PostCategory(models.Model):

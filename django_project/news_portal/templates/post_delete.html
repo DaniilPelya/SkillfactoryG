@@ -1,0 +1,39 @@
+<!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
+{% extends 'flatpages/default.html' %}
+
+<!-- Название у нас будет proudcts -->
+{% block title %}
+Posts
+{% endblock title %}
+
+{% block content %}
+<h2>Вы действительно хотите удалить данный товар?</h2>
+<table>
+    <thead>
+        <th>
+            Заголовок
+        </th>
+        <th>
+            Дата публикации
+        </th>
+        <th>
+            новость
+        </th>
+    </thead>
+    <tr>
+        <td>
+            {{ post.title_post|title }} <!-- не забываем, что переменные в шаблоне ничем не отличаются от переменных в Python. Здесь также можно получать доступ к полям класса. Например, здесь мы выводим заголовок, в следующем столбце дату публикации и т. д.  -->
+        </td>
+        <td>
+            {{ post.time_in_post|date:'d M Y G:i' }}
+        </td>
+        <td>
+            {{ post.text_post|truncatewords:20 }}
+        </td>
+    </tr>
+</table>
+ 
+<form method="POST">
+    {% csrf_token %}
+    <input type="submit" value="подтвердить"></form>
+{% endblock content %} 
