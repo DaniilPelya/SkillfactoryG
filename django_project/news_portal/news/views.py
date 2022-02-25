@@ -55,7 +55,7 @@ class PostCreateView(CreateView):
 
 
 # дженерик для редактирования объекта
-class PostUpdateView(LoginRequiredMixin, UpdateView):
+class PostUpdateView(UpdateView):
     template_name = 'post_create.html'
     form_class = PostForm
 
