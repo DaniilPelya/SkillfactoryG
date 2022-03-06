@@ -45,6 +45,12 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'django_filters',
 
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # ... включите поставщиков, которых вы хотите включить:
+    #'allauth.socialaccount.providers.google',
+
 ]
 
 SITE_ID = 1
@@ -78,6 +84,15 @@ TEMPLATES = [
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = [
+    # Необходимо войти в систему под именем пользователя в админке Django, независимо от `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # специальные методы аутентификации `allauth`, такие как вход по электронной почте
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
 
 WSGI_APPLICATION = 'news_portal.wsgi.application'
 
@@ -128,6 +143,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+LOGIN_URL = '/accounts/login/'
+
+# регистрация и вход по почте
+ACCOUNT_EMAIL_REQUIRED = True  # указывает на то, что поле email должно быть обязательным
+ACCOUNT_UNIQUE_EMAIL = True  # указывает на то, что поле email должно быть уникальным
+ACCOUNT_USERNAME_REQUIRED = False  # указывает на то, что поле username не должно быть обязательным
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # указывает на то, что аутентификация будет происходить посредством электронной почты
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # указывает на то, что верификация почты отсутствует.
+ACCOUNT_LOGOUT_REDIRECT_URL = "/news"  # Установить ссылку перехода после выхода из системы
+LOGIN_REDIRECT_URL = "/news"
+ACCOUNT_FORMS = {'signup': 'news.forms.BasicSignupForm'}
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

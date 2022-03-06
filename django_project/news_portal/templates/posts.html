@@ -54,6 +54,12 @@ Posts
 
         <a href="{% url 'post_create' %}">Добавить новый пост</a> <br>
 
+        {% if user.is_authenticated %}
+            {% if is_not_author %}
+                <button> <a href="upgrade/"> Стать автором </a> </button>
+            {% endif %}
+        {% endif %}
+        <br>
         <!-- Проверяем что поддерживается постраничный вывод -->
         {% if is_paginated %}
 

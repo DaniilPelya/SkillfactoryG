@@ -1,10 +1,14 @@
-from django.shortcuts import render
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView  # импортируем класс, который говорит нам о том, что в этом представлении мы будем выводить список объектов из БД,
+from django.shortcuts import render, redirect
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, \
+    TemplateView  # импортируем класс, который говорит нам о том, что в этом представлении мы будем выводить список объектов из БД,
                                                        # импортируем класс получения деталей объекта
 from .models import Post, Category
 from .forms import PostForm  # импортируем нашу форму
 from .filters import PostFilter  # импортируем недавно написанный фильтр
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.models import Group
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
 
@@ -26,6 +30,7 @@ class PostList(ListView):
     def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
         context = super().get_context_data(**kwargs)
         context['filter'] = PostFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        context['is_not_author'] = not self.request.user.groups.filter(name='authors').exists()  # добавили логическую переменную, которая дает True, если пользователя еще нет в авторах
         #context['categories'] = Category.objects.all()
         #context['form'] = PostForm()
         return context
@@ -49,13 +54,15 @@ class PostDetail(DetailView):
 
 
 # дженерик для создания объекта. Надо указать только имя шаблона и класс формы, который мы написали в прошлом юните. Остальное он сделает за вас
-class PostCreateView(CreateView):
+class PostCreateView(PermissionRequiredMixin, CreateView):  # PermissionRequiredMixin миксин для проверки прав доступа
+    permission_required = ('news.add_post',)
     template_name = 'post_create.html'
     form_class = PostForm
 
 
 # дженерик для редактирования объекта
-class PostUpdateView(UpdateView):
+class PostUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('news.change_post',)
     template_name = 'post_create.html'
     form_class = PostForm
 
@@ -66,7 +73,7 @@ class PostUpdateView(UpdateView):
 
 
 # дженерик для удаления товара
-class PostDeleteView(DeleteView):
+class PostDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'post_delete.html'
     queryset = Post.objects.all()
     success_url = '/news/'
@@ -93,5 +100,15 @@ class PostListSearch(ListView):
         #context['categories'] = Category.objects.all()
         #context['form'] = PostForm()
         return context
+
+
+@login_required
+def upgrade_me(request):  # функция-представление для добавления юсера в группу авторов, @login_required проверяет, зарегестрирован ли пользователь на сайте
+    user = request.user
+    author_group = Group.objects.get(name='authors')
+    if not request.user.groups.filter(name='authors').exists():
+        author_group.user_set.add(user)
+    return redirect('/news')
+
 
 

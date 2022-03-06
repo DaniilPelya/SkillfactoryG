@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import PostList, PostDetail, PostCreateView, PostUpdateView, PostDeleteView, PostListSearch  # импортируем наше представление
+from .views import PostList, PostDetail, PostCreateView, PostUpdateView, PostDeleteView, PostListSearch, upgrade_me# импортируем наше представление
 
 
 urlpatterns = [
@@ -10,4 +10,6 @@ urlpatterns = [
     path('create/<int:pk>', PostUpdateView.as_view(), name='post_update'),
     path('delete/<int:pk>', PostDeleteView.as_view(), name='post_delete'),
     path('search/', PostListSearch.as_view(), name='posts_search'),  # путь к странице поиска постов
+    path('upgrade/', upgrade_me, name='upgrade'),  # на этом адресе срабатывае вьюшка upgrade_me, которая после выполнения сразу переводит юсера на страницу news
+
 ]
